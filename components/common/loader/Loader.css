@@ -1,0 +1,63 @@
+/* CSS for large loader */
+.large-loader {
+	width: 40px;
+	height: 60px;
+	position: relative;
+}
+.large-loader::before,
+.large-loader::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: #22577A;
+	clip-path: polygon(0 0, 100% 0, 100% 67%, 50% 67%, 50% 34%, 0 34%);
+	animation: sp7 2s infinite;
+}
+.large-loader::after {
+	--s: -1, -1;
+}
+@keyframes sp7 {
+	0%,
+	10% {
+		transform: scale(var(--s, 1)) translate(0, 0) rotate(0deg);
+	}
+	33% {
+		transform: scale(var(--s, 1)) translate(0, -20px) rotate(0deg);
+	}
+	66% {
+		transform: scale(var(--s, 1)) translate(10px, -20px) rotate(-90deg);
+	}
+	90%,
+	100% {
+		transform: scale(var(--s, 1)) translate(10px, -10px) rotate(-90deg);
+	}
+}
+
+/* CSS for small loader */
+.small-loader {
+	width: 20px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	border: 4px solid #0000;
+	border-right-color: #22577a;
+	position: relative;
+	animation: l24 1s infinite linear;
+}
+.small-loader:before,
+.small-loader:after {
+	content: '';
+	position: absolute;
+	inset: -4px;
+	border-radius: 50%;
+	border: inherit;
+	animation: inherit;
+	animation-duration: 2s;
+}
+.small-loader:after {
+	animation-duration: 4s;
+}
+@keyframes l24 {
+	100% {
+		transform: rotate(1turn);
+	}
+}
