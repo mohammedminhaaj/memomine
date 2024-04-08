@@ -4,55 +4,52 @@ import useToast from '@/hooks/useToast';
 import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { IFormResponse } from '@/lib/formHelpers';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import AuthSubmitButton from './AuthSubmitButton';
 
-export type SignUpFormInput = {
+export type LoginFormInput = {
 	email: string;
 	password: string;
-	confirmPassword: string;
 };
 
-const SignUpForm: React.FC = () => {
+const LoginForm: React.FC = () => {
 	const {
 		register,
-		watch,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<SignUpFormInput>();
+	} = useForm<LoginFormInput>();
 
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 	const toast = useToast();
 
-	const { user, signup } = useAuthContext();
+	const { user, login } = useAuthContext();
 
 	const { push } = useRouter();
 
-	const matchPasswords: (value: any) => boolean | string = (value: string) =>
-		watch('password') === value || "Passwords don't match";
+	const searchParams = useSearchParams();
 
-	const onSubmit: SubmitHandler<SignUpFormInput> = async (data) => {
+	const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
 		if (user) {
 			toast('User is already logged in', MessageType.INFO);
 			push('/dashboard');
 		} else {
 			setIsSubmitting(true);
-			const response: IFormResponse = await signup(
+			const response: IFormResponse = await login(
 				data.email,
 				data.password
 			);
 			if (response.code === 200) {
 				toast(response.message);
-				push('/dashboard');
+				const redirectTo: string | null = searchParams.get('next');
+				push(redirectTo ?? '/dashboard');
 			} else {
 				toast(response.message, MessageType.ERROR);
 				reset({
 					password: '',
-					confirmPassword: '',
 				});
 			}
 
@@ -78,7 +75,7 @@ const SignUpForm: React.FC = () => {
 					type='text'
 				/>
 				<label
-					className={`floating-label ${errors.email && 'error'}`}
+					className={`floating-label  ${errors.email && 'error'}`}
 					htmlFor='email-field'>
 					Email
 				</label>
@@ -106,7 +103,7 @@ const SignUpForm: React.FC = () => {
 				/>
 				<label
 					htmlFor='password-field'
-					className={`floating-label ${errors.password && 'error'}`}>
+					className={`floating-label  ${errors.password && 'error'}`}>
 					Password
 				</label>
 			</div>
@@ -115,46 +112,13 @@ const SignUpForm: React.FC = () => {
 					{errors.password.message}
 				</p>
 			)}
-			<div className='relative'>
-				<input
-					id='confirm-password-field'
-					required
-					{...register('confirmPassword', {
-						required: 'This field is required',
-						minLength: {
-							value: 6,
-							message:
-								'Confirm password should contain atleast 6 characters',
-						},
-						validate: matchPasswords,
-					})}
-					className={`floating-input peer ${
-						errors.confirmPassword && 'error'
-					}`}
-					title='Confirm Password'
-					type='password'
-				/>
-				<label
-					htmlFor='confirm-password-field'
-					className={`floating-label ${
-						errors.confirmPassword && 'error'
-					}`}>
-					Confirm Password
-				</label>
-			</div>
-			{errors.confirmPassword && (
-				<p className='text-xs text-red-500'>
-					{errors.confirmPassword.message}
-				</p>
-			)}
-
 			<AuthSubmitButton
 				isSubmitting={isSubmitting}
-				text={'Create Account'}
-				textWhenSubmitting={'Creating Account'}
+				text={'Sign In'}
+				textWhenSubmitting={'Logging In'}
 			/>
 		</form>
 	);
 };
 
-export default SignUpForm;
+export default LoginForm;

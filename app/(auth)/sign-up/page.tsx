@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	title: 'MemoMine | Create Account',
 };
 
-const SignUp: () => JSX.Element = () => {
+const SignUp: React.FC = () => {
 	return (
 		<>
 			<h1 className='text-center text-3xl font-extrabold text-secondary'>

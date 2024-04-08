@@ -1,4 +1,10 @@
-import { createContext, useContext, useState } from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+	useState,
+} from 'react';
 
 export enum MessageType {
 	SUCCESS,
@@ -33,29 +39,28 @@ export const MessageProvider = ({
 }>) => {
 	const [messages, setMessages] = useState<MessageItem[]>([]);
 
-	const insertMessage = (message: string, type: MessageType) => {
+	const insertMessage = useCallback((message: string, type: MessageType) => {
 		setMessages((previous: MessageItem[]) => [
 			...previous,
-			{ message: message, type: type },
+			{ message, type },
 		]);
-	};
+	}, []);
 
-	const shiftMessage = () => {
-		setMessages((previous: MessageItem[]) =>
-			previous.filter(
-				(_: MessageItem, itemIndex: number) =>
-					itemIndex !== previous.length - 1
-			)
-		);
-	};
+	const shiftMessage = useCallback(() => {
+		setMessages((previous: MessageItem[]) => {
+			const tempArray: MessageItem[] = [...previous];
+			tempArray.shift();
+			return tempArray;
+		});
+	}, []);
 
-	const removeMessage = (index: number) => {
+	const removeMessage = useCallback((index: number) => {
 		setMessages((previous: MessageItem[]) =>
 			previous.filter(
 				(_: MessageItem, itemIndex: number) => itemIndex !== index
 			)
 		);
-	};
+	}, []);
 
 	return (
 		<MessageContext.Provider

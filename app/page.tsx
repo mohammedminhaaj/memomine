@@ -22,7 +22,7 @@ export default function Home() {
 						</div>
 						<button
 							type='button'
-							title='get started'
+							title='Get started'
 							className='font-extrabold transition-all ease-in duration-150 hover:bg-white hover:text-secondary px-4 md:px-8 py-2 md:py-4 text-white md:text-2xl rounded-lg hover:gap-5 flex gap-2 items-center justify-center'>
 							<p>Get Started</p> <ArrowRight />
 						</button>

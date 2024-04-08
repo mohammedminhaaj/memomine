@@ -1,16 +1,11 @@
-import { overTheRainbow } from '@/app/layout';
-import Link from 'next/link';
+import RedirectIfLoggedIn from '@/components/auth/RedirectIfLoggedIn';
+import Logo from '@/components/common/Logo';
 
 const AuthLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 	return (
-		<>
+		<RedirectIfLoggedIn>
 			<header className='flex p-5'>
-				<Link
-					href='/'
-					className={`${overTheRainbow.className} text-3xl font-extrabold text-primary`}>
-					<span className='hidden md:block'>Memomine</span>
-					<span className='md:hidden'>m</span>
-				</Link>
+				<Logo />
 			</header>
 			<main className='flex flex-col mx-auto w-11/12 md:w-5/12 lg:4/12 gap-10'>
 				<div className='flex flex-col gap-5 shadow-xl p-10 rounded-xl'>
@@ -22,7 +17,7 @@ const AuthLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 					<p>Privacy Policy</p>
 				</div>
 			</main>
-		</>
+		</RedirectIfLoggedIn>
 	);
 };
 

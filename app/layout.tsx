@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Over_the_Rainbow, Poppins } from 'next/font/google';
 import './globals.css';
 import { NextFont } from 'next/dist/compiled/@next/font';
-import { Providers } from '@/store/providers';
+import { Providers } from '@/store/Providers';
 import Toast from '@/components/common/Toast';
 
 export const overTheRainbow: NextFont = Over_the_Rainbow({

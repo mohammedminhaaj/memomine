@@ -2,20 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .floating-label {
-    @apply absolute bg-white text-sm text-gray-400 bottom-2.5 left-2.5 transition-transform duration-200 peer-focus:-translate-y-6 peer-valid:-translate-y-6 peer-focus:text-xs peer-valid:text-xs peer-focus:text-primary peer-focus:px-1 peer-valid:px-1;
+	@apply absolute bg-white text-sm text-gray-400 bottom-2.5 left-2.5 transition-transform duration-200 peer-focus:-translate-y-6 peer-valid:-translate-y-6 peer-focus:text-xs peer-valid:text-xs peer-focus:text-primary peer-focus:px-1 peer-valid:px-1;
 }
 
 .floating-label.error {
-    @apply peer-focus:text-red-500 text-red-500
+	@apply peer-focus:text-red-500 text-red-500;
 }
 
 .floating-input {
-    @apply border rounded p-2 focus:outline-primary w-full;
+	@apply border rounded p-2 focus:outline-primary w-full;
 }
 
 .floating-input.error {
-    @apply focus:outline-red-500 border-red-500
+	@apply focus:outline-red-500 border-red-500;
 }
 
+.form-input {
+	@apply w-full my-1 rounded border focus:outline-primary py-1 px-2;
+}
+
+.form-label {
+	@apply absolute -top-1 left-2 bg-white px-1 text-xs text-gray-400 peer-focus:text-primary;
+}
+
+.form-input.error {
+	@apply focus:outline-red-500 border-red-500;
+}
+
+.form-label.error {
+	@apply peer-focus:text-red-500 text-red-500;
+}
+
+.primary-button {
+	@apply rounded-lg transition-all duration-300 font-bold bg-primary hover:bg-white text-white hover:text-primary flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700;
+}
+
+.secondary-button {
+	@apply rounded-lg transition-all duration-300 font-bold bg-white hover:bg-primary text-primary hover:text-white flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700;
+}

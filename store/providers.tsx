@@ -9,8 +9,8 @@ export const Providers = ({
 	children: React.ReactNode;
 }>) => {
 	return (
-		<MessageProvider>
-			<AuthProvider>{children}</AuthProvider>
-		</MessageProvider>
+		<AuthProvider>
+			<MessageProvider>{children}</MessageProvider>
+		</AuthProvider>
 	);
 };
