@@ -5,11 +5,11 @@ import { GroupSchema } from '@/lib/schema';
 
 import { Group } from '@/components/dashboard/group/CreateGroupForm';
 
-import { COOKIE_NAME, PAGINATION_ITEMS } from '@/lib/constants';
-import { User } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
+import { PAGINATION_ITEMS } from '@/lib/constants';
+
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from './auth';
+import { redirect } from 'next/navigation';
 
 export const getGroups = async (
 	page: string | undefined,
@@ -20,6 +20,8 @@ export const getGroups = async (
 
 	const { user } = await getUser(supabase);
 
+	if (!user) redirect('/login');
+
 	const parsedPage: number = page ? parseInt(page) : 1;
 	const startLimit: number = PAGINATION_ITEMS * parsedPage - PAGINATION_ITEMS;
 	const endLimit: number = PAGINATION_ITEMS * parsedPage - 1;
@@ -29,11 +31,13 @@ export const getGroups = async (
 		.select('*', { count: 'exact' })
 		.order('created_at', { ascending: false })
 		.range(startLimit, endLimit);
+
 	if (searchQuery) {
 		query = query.or(
 			`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`
 		);
 	}
+
 	if (group === 'created') {
 		query = query.eq('created_by', user.id);
 	} else if (group === 'shared') {
@@ -41,7 +45,7 @@ export const getGroups = async (
 	} else {
 		query = query.or(`created_by.eq.${user.id},members.cs.{${user.email}}`);
 	}
-
+	
 	const { error, data, count } = await query;
 	if (error) throw new Error(error.message);
 	return { groups: data as Group[], count, currentUserId: user.id };
@@ -53,6 +57,10 @@ export const createGroup: (
 	id?: string
 ) => Promise<IFormResponse> = async (formData, method, id) => {
 	const supabase = createClient();
+	const { user } = await getUser(supabase);
+
+	if (!user) redirect('/login');
+
 	const result = GroupSchema.safeParse(formData);
 
 	if (!result.success) {
@@ -67,7 +75,7 @@ export const createGroup: (
 				? new Date(formData.available_at)
 				: null;
 			const data = {
-				created_by: formData.created_by,
+				created_by: user.id,
 				name: formData.name,
 				description:
 					formData.description === ''
@@ -110,6 +118,9 @@ export const deleteGroup: (groupId: string) => Promise<IFormResponse> = async (
 ) => {
 	const supabase = createClient();
 	const { user } = await getUser(supabase);
+
+	if (!user) redirect('/login');
+
 	try {
 		const { error } = await supabase
 			.from('group')
@@ -138,6 +149,8 @@ export const getPreviousMembers = async () => {
 	const supabase = createClient();
 	let memberArray: string[] = [];
 	const { user } = await getUser(supabase);
+
+	if (!user) redirect('/login');
 	try {
 		const { error, data } = await supabase
 			.from('group')

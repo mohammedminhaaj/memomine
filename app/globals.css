@@ -35,9 +35,9 @@
 }
 
 .primary-button {
-	@apply rounded-lg transition-all duration-300 font-bold bg-primary hover:bg-white text-white hover:text-primary flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700;
+	@apply rounded-lg transition-all duration-300 font-bold bg-primary hover:bg-white text-white hover:text-primary flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700 disabled:hover:text-white disabled:text-white;
 }
 
 .secondary-button {
-	@apply rounded-lg transition-all duration-300 font-bold bg-white hover:bg-primary text-primary hover:text-white flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700;
+	@apply rounded-lg transition-all duration-300 font-bold bg-white hover:bg-primary text-primary hover:text-white flex gap-1 items-center justify-center px-4 py-2 hover:gap-2 disabled:bg-gray-500 disabled:hover:bg-gray-700 disabled:text-white disabled:hover:text-white;
 }

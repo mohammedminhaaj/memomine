@@ -1,17 +1,16 @@
 import { getGroups } from '@/actions/group';
 import CreateGroupButton from './CreateGroup';
-import { cookies } from 'next/headers';
 import GroupCard from './GroupCard';
 import Pagination from '../Pagination';
-import { COOKIE_NAME } from '@/lib/constants';
 import { SearchParamType } from '@/app/dashboard/(group)/page';
-import { getCurrentUser } from '@/lib/supabaseConfig';
+
 
 const GroupList: React.FC<SearchParamType> = async ({
 	page,
 	query,
 	group,
 }: SearchParamType) => {
+
 	const { groups, count, currentUserId } = await getGroups(
 		page,
 		query,

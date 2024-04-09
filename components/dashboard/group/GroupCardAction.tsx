@@ -7,10 +7,12 @@ import { Group } from './CreateGroupForm';
 import GroupDeleteAction from './GroupDeleteAction';
 import GroupEditAction from './GroupEditAction';
 
-const GroupCardAction: React.FC<{ group: Group }> = ({
+const GroupCardAction: React.FC<{ group: Group; currentUserId: string }> = ({
 	group,
+	currentUserId,
 }: {
 	group: Group;
+	currentUserId: string;
 }) => {
 	const [toggleActions, setToggleActions] = useState<boolean>(false);
 	const wrapperRef = useRef<HTMLDivElement>(null);
@@ -61,12 +63,13 @@ const GroupCardAction: React.FC<{ group: Group }> = ({
 							<GroupEditAction
 								ref={editModalRef}
 								group={group}
+								isDisabled={group.created_by !== currentUserId}
 								handleToggleActions={handleToggleActions}
 							/>
 							<GroupDeleteAction
 								ref={deleteModalRef}
 								groupId={group.id!}
-								created_by_id={group.created_by}
+								isDisabled={group.created_by !== currentUserId}
 								handleToggleActions={handleToggleActions}
 							/>
 						</ul>

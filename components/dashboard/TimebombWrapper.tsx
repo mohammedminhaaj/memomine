@@ -57,7 +57,11 @@ const TimebombWrapper: React.FC<TimebombWrapperType> = ({
 	return !isOwner && seconds > 0 ? (
 		<div className='flex justify-center gap-2 items-center w-full h-full flex-col relative font-bold text-white'>
 			<Lock size={20} />
-			<p className='text-center'>{`${dayString}${hourString}${minuteString}${secondString}`}</p>
+			<p
+				className='text-center'
+				suppressHydrationWarning={
+					true
+				}>{`${dayString}${hourString}${minuteString}${secondString}`}</p>
 		</div>
 	) : (
 		<>{children}</>

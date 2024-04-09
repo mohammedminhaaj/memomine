@@ -1,13 +1,13 @@
 'use client';
 
 import useToast from '@/hooks/useToast';
-import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { IFormResponse } from '@/lib/formHelpers';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import AuthSubmitButton from './AuthSubmitButton';
+import { signupUser } from '@/actions/auth';
 
 export type SignUpFormInput = {
 	email: string;
@@ -28,36 +28,28 @@ const SignUpForm: React.FC = () => {
 
 	const toast = useToast();
 
-	const { user, signup } = useAuthContext();
-
 	const { push } = useRouter();
 
 	const matchPasswords: (value: any) => boolean | string = (value: string) =>
 		watch('password') === value || "Passwords don't match";
 
 	const onSubmit: SubmitHandler<SignUpFormInput> = async (data) => {
-		if (user) {
-			toast('User is already logged in', MessageType.INFO);
+		setIsSubmitting(true);
+		const response: IFormResponse = await signupUser(
+			data.email,
+			data.password
+		);
+		if (response.code === 200) {
+			toast(response.message);
 			push('/dashboard');
 		} else {
-			setIsSubmitting(true);
-			const response: IFormResponse = await signup(
-				data.email,
-				data.password
-			);
-			if (response.code === 200) {
-				toast(response.message);
-				push('/dashboard');
-			} else {
-				toast(response.message, MessageType.ERROR);
-				reset({
-					password: '',
-					confirmPassword: '',
-				});
-			}
-
-			setIsSubmitting(false);
+			toast(response.message, MessageType.ERROR);
+			reset({
+				password: '',
+				confirmPassword: '',
+			});
 		}
+		setIsSubmitting(false);
 	};
 
 	return (

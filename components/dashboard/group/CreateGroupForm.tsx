@@ -6,7 +6,6 @@ import DynamicSelect, { SelectedItem } from '../../common/DynamicSelect';
 import { ChangeEvent, memo, useCallback, useRef, useState } from 'react';
 import { SmallLoader } from '../../common/loader/Loader';
 import Image from 'next/image';
-import { useAuthContext } from '@/store/AuthProvider';
 import { z } from 'zod';
 import { GroupSchema } from '@/lib/schema';
 import { IFormResponse, parseZodErrors } from '@/lib/formHelpers';
@@ -135,7 +134,7 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
 	onClose,
 	group,
 }: CreateGroupFormProps) => {
-	const { user } = useAuthContext();
+
 
 	const groupNameRef = useRef<HTMLInputElement>(null);
 	const groupDescriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -178,7 +177,6 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
 		setIsSubmitting(true);
 
 		const formData: Group = {
-			created_by: user?.id!,
 			name: groupNameRef.current?.value!,
 			description: groupDescriptionRef.current?.value!,
 			available_at: timebombValue,
@@ -284,7 +282,7 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
 				onSelect={updateMembers}
 				customValidation={customValidationForMembers}
 				cacheFunction={() => {
-					return getPreviousMembers(user?.id!);
+					return getPreviousMembers();
 				}}
 				hasError={membersHasError}
 			/>

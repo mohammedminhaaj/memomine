@@ -1,13 +1,13 @@
 'use client';
 
 import useToast from '@/hooks/useToast';
-import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { IFormResponse } from '@/lib/formHelpers';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import AuthSubmitButton from './AuthSubmitButton';
+import { loginUser } from '@/actions/auth';
 
 export type LoginFormInput = {
 	email: string;
@@ -26,35 +26,27 @@ const LoginForm: React.FC = () => {
 
 	const toast = useToast();
 
-	const { user, login } = useAuthContext();
-
 	const { push } = useRouter();
 
 	const searchParams = useSearchParams();
 
 	const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
-		if (user) {
-			toast('User is already logged in', MessageType.INFO);
-			push('/dashboard');
+		setIsSubmitting(true);
+		const response: IFormResponse = await loginUser(
+			data.email,
+			data.password
+		);
+		if (response.code === 200) {
+			toast(response.message);
+			const redirectTo: string | null = searchParams.get('next');
+			push(redirectTo ?? '/dashboard');
 		} else {
-			setIsSubmitting(true);
-			const response: IFormResponse = await login(
-				data.email,
-				data.password
-			);
-			if (response.code === 200) {
-				toast(response.message);
-				const redirectTo: string | null = searchParams.get('next');
-				push(redirectTo ?? '/dashboard');
-			} else {
-				toast(response.message, MessageType.ERROR);
-				reset({
-					password: '',
-				});
-			}
-
-			setIsSubmitting(false);
+			toast(response.message, MessageType.ERROR);
+			reset({
+				password: '',
+			});
 		}
+		setIsSubmitting(false);
 	};
 
 	return (

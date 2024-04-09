@@ -1,9 +1,7 @@
-'use client';
-
-import { useAuthContext } from '@/store/AuthProvider';
 import Link from 'next/link';
-import { SmallLoader } from '../common/loader/Loader';
 import NavItems from '../common/NavItems';
+import { createClient } from '@/lib/supabase/server';
+import { getUser } from '@/actions/auth';
 
 const LoginButton: React.FC = () => (
 	<Link
@@ -14,9 +12,10 @@ const LoginButton: React.FC = () => (
 	</Link>
 );
 
-const AuthAction: React.FC = () => {
-	const { user, authReady } = useAuthContext();
-	return !authReady ? <SmallLoader /> : user ? <NavItems /> : <LoginButton />;
+const AuthAction: React.FC = async () => {
+	const supabase = createClient();
+	const { user } = await getUser(supabase);
+	return user ? <NavItems userEmail={user.email!} /> : <LoginButton />;
 };
 
 export default AuthAction;

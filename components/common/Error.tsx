@@ -1,5 +1,3 @@
-'use client';
-
 import { RefreshCw } from 'react-feather';
 
 const Error = ({

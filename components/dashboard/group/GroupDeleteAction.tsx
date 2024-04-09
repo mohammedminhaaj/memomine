@@ -3,7 +3,6 @@ import { deleteGroup } from '@/actions/group';
 import Modal from '@/components/common/Modal';
 import useToast from '@/hooks/useToast';
 import { IFormResponse } from '@/lib/formHelpers';
-import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -11,24 +10,23 @@ import { forwardRef, useState } from 'react';
 
 const GroupDeleteAction = forwardRef<
 	HTMLDivElement,
-	{ groupId: string; handleToggleActions: () => void; created_by_id: string }
+	{ groupId: string; handleToggleActions: () => void; isDisabled: boolean }
 >(
 	(
 		{
 			groupId,
 			handleToggleActions,
-			created_by_id,
+			isDisabled,
 		}: {
 			groupId: string;
 			handleToggleActions: () => void;
-			created_by_id: string;
+			isDisabled: boolean;
 		},
 		ref
 	) => {
 		const [toggleDeleteModal, setToggleDeleteModal] =
 			useState<boolean>(false);
 		const [isDeleting, setIsDeleting] = useState<boolean>(false);
-		const { user } = useAuthContext();
 		const toast = useToast();
 		const { refresh } = useRouter();
 		const handleToggleDeleteModal = () => {
@@ -37,10 +35,7 @@ const GroupDeleteAction = forwardRef<
 
 		const handleDeleteGroup = async () => {
 			setIsDeleting(true);
-			const response: IFormResponse = await deleteGroup(
-				groupId,
-				user?.id!
-			);
+			const response: IFormResponse = await deleteGroup(groupId);
 			if ((response.code as number) >= 400)
 				toast(response.message, MessageType.ERROR);
 			else {
@@ -57,7 +52,7 @@ const GroupDeleteAction = forwardRef<
 					<button
 						title='Delete group'
 						type='button'
-						disabled={user?.id !== created_by_id}
+						disabled={isDisabled}
 						onClick={handleToggleDeleteModal}
 						className='px-2 w-full disabled:text-gray-400 disabled:hover:bg-transparent transition-colors duration-300 hover:bg-red-500 rounded-sm hover:text-white'>
 						Delete

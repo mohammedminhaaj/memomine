@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const GroupSchema = z.object({
 	id: z.string().optional(),
-	created_by: z.string(),
+	created_by: z.string().optional(),
 	name: z
 		.string()
 		.trim()

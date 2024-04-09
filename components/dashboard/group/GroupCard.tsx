@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Group } from './CreateGroupForm';
 import { Clock, Users } from 'react-feather';
 import GroupCardAction from './GroupCardAction';
@@ -36,7 +35,7 @@ const GroupCard: React.FC<{ group: Group; currentUserId: string }> = ({
 								/>
 							)}
 						</div>
-						<GroupCardAction group={group} />
+						<GroupCardAction group={group} currentUserId={currentUserId} />
 					</div>
 					<p className='relative whitespace-nowrap transition duration-300 group-hover:whitespace-normal max-w-full text-ellipsis overflow-hidden font-bold text-white'>
 						{group.name}

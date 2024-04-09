@@ -1,6 +1,5 @@
 'use client';
 
-import { AuthProvider } from './AuthProvider';
 import { MessageProvider } from './MessageProvider';
 
 export const Providers = ({
@@ -8,9 +7,5 @@ export const Providers = ({
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
-	return (
-		<AuthProvider>
-			<MessageProvider>{children}</MessageProvider>
-		</AuthProvider>
-	);
+	return <MessageProvider>{children}</MessageProvider>;
 };

@@ -1,13 +1,13 @@
 'use client';
 
 import useToast from '@/hooks/useToast';
-import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { IFormResponse } from '@/lib/formHelpers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import AuthSubmitButton from './AuthSubmitButton';
+import { passwordReset } from '@/actions/auth';
 
 export type PasswordResetFormInput = {
 	email: string;
@@ -25,29 +25,22 @@ const PasswordResetForm: React.FC = () => {
 
 	const toast = useToast();
 
-	const { user, passwordReset } = useAuthContext();
-
 	const { push } = useRouter();
 
 	const onSubmit: SubmitHandler<PasswordResetFormInput> = async (data) => {
-		if (user) {
-			toast('User is already logged in', MessageType.INFO);
-			push('/dashboard');
+		setIsSubmitting(true);
+		const response: IFormResponse = await passwordReset(data.email);
+		if (response.code === 200) {
+			toast(response.message);
+			push('/login');
 		} else {
-			setIsSubmitting(true);
-			const response: IFormResponse = await passwordReset(data.email);
-			if (response.code === 200) {
-				toast(response.message);
-				push('/login');
-			} else {
-				toast(response.message, MessageType.ERROR);
-				reset({
-					email: '',
-				});
-			}
-
-			setIsSubmitting(false);
+			toast(response.message, MessageType.ERROR);
+			reset({
+				email: '',
+			});
 		}
+
+		setIsSubmitting(false);
 	};
 
 	return (

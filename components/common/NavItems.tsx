@@ -1,7 +1,6 @@
 'use client';
 
 import useToast from '@/hooks/useToast';
-import { useAuthContext } from '@/store/AuthProvider';
 import { MessageType } from '@/store/MessageProvider';
 import { IFormResponse } from '@/lib/formHelpers';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +10,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Edit2, Grid, LogOut, User } from 'react-feather';
+import { logoutUser } from '@/actions/auth';
 
 const LogoutButton: React.FC<{ className?: string }> = ({
 	className,
@@ -20,11 +20,10 @@ const LogoutButton: React.FC<{ className?: string }> = ({
 	const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 	const { push, refresh } = useRouter();
 	const pathname: string = usePathname();
-	const { logout } = useAuthContext();
 	const toast = useToast();
 	const handleLogout: () => void = async () => {
 		setIsLoggingOut(true);
-		const response: IFormResponse = await logout();
+		const response: IFormResponse = await logoutUser();
 		if (response.code === 200) {
 			toast(response.message);
 			pathname === '/' ? refresh() : push('/login');
@@ -46,12 +45,13 @@ const LogoutButton: React.FC<{ className?: string }> = ({
 	);
 };
 
-const ProfileCard: React.FC<{ onClose: () => void }> = ({
+const ProfileCard: React.FC<{ onClose: () => void; userEmail: string }> = ({
 	onClose,
+	userEmail,
 }: {
 	onClose: () => void;
+	userEmail: string;
 }) => {
-	const { user } = useAuthContext();
 	return createPortal(
 		<>
 			<div onClick={onClose} className='fixed h-full w-full'></div>
@@ -80,7 +80,7 @@ const ProfileCard: React.FC<{ onClose: () => void }> = ({
 								Logged in as:
 							</p>
 							<p className='text-sm break-words font-bold'>
-								{user?.email}
+								{userEmail}
 							</p>
 						</span>
 						<div className='grid grid-cols-subgrid gap-1 col-span-4'>
@@ -101,7 +101,11 @@ const ProfileCard: React.FC<{ onClose: () => void }> = ({
 	);
 };
 
-const ProfileButton: React.FC = () => {
+const ProfileButton: React.FC<{ userEmail: string }> = ({
+	userEmail,
+}: {
+	userEmail: string;
+}) => {
 	const [showCard, setShowCard] = useState<boolean>(false);
 	const onClose: () => void = () => {
 		setShowCard((prev: boolean) => !prev);
@@ -117,14 +121,22 @@ const ProfileButton: React.FC = () => {
 			</button>
 			<AnimatePresence>
 				{showCard && (
-					<ProfileCard key={'profile-card'} onClose={onClose} />
+					<ProfileCard
+						key={'profile-card'}
+						onClose={onClose}
+						userEmail={userEmail}
+					/>
 				)}
 			</AnimatePresence>
 		</div>
 	);
 };
 
-const NavItems: React.FC = () => {
+const NavItems: React.FC<{ userEmail: string }> = ({
+	userEmail,
+}: {
+	userEmail: string;
+}) => {
 	const pathname: string = usePathname();
 	return (
 		<ul className='flex flex-row justify-end items-center gap-6 font-extrabold'>
@@ -146,7 +158,7 @@ const NavItems: React.FC = () => {
 				)}
 			</li>
 			<li>
-				<ProfileButton />
+				<ProfileButton userEmail={userEmail} />
 			</li>
 		</ul>
 	);
